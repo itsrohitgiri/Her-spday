@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday</title>
+    <style>
+        /* General body settings */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('lovebg.jpg') no-repeat center/cover;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Animated Image settings */
+        #animatedImage {
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            animation: slideDown 2s ease-out forwards;
+            text-align: center;
+        }
+
+        /* Copyright text */
+        #copyright {
+            font-size: 30px;
+            color: skyblue;
+            font-family: Arial, sans-serif;
+            text-shadow: 1px 1px 2px palevioletred;
+        }
+
+        /* Text to tap after animation ends */
+        #tapToContinue {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            color: white;
+            font-size: 24px;
+            text-shadow: 1px 1px 2px black;
+            cursor: pointer;
+        }
+
+        /* Animation */
+        @keyframes slideDown {
+            from {
+                top: -200px;
+            }
+            to {
+                top: 5%;
+            }
+        }
+
+        /* Canvas for confetti */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Message writing effect */
+        #message {
+            position: absolute;
+            bottom: 50px;
+            color: white;
+            font-size: 24px;
+            text-shadow: 1px 1px 2px skyblue;
+            font-family: Arial, sans-serif;
+            display: none;
+        }
+
+        /* Pop-up modal styles */
+        #modal {
+    display: none;
+    position: fixed;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(to bottom, skyblue 0%, palevioletred 100%); /* Gradient effect */
+    padding: 20px 40px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    text-align: center;
+    z-index: 100;
+    font-family: Arial, sans-serif;
+    color: white;
+    width: 400px;
+}
+
+/* Style buttons */
+#modal button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+}
+
+.think-btn {
+    background-color: black;
+    color: white;
+}
+
+.yes-btn {
+    background-color: palevioletred;
+    color: white;
+}
+
+#modal button:hover {
+    opacity: 0.8;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Animated birthday image -->
+    <div id="animatedImage">
+        <img src="https://png.pngtree.com/png-clipart/20220923/original/pngtree-happy-birthday-my-love-art-font-png-image_8628271.png" height="300px" width="300px" alt="">
+        <div id="copyright">&copy; by itsrohitgiri</div>
+    </div>
+    <canvas id="confettiCanvas"></canvas>
+    <div id="tapToContinue">Tap to Continue</div>
+    <div id="message"></div>
+
+    <!-- Modal popup for confirmation -->
+    <div id="modal">
+        <h2>Will you be mine forever?</h2>
+        <button class="think-btn" id="sochteHai">Sochte hai</button>
+        <button class="yes-btn" onclick="handleYes()">Yesss</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        const animatedImage = document.getElementById('animatedImage');
+        const tapToContinue = document.getElementById('tapToContinue');
+        const messageDiv = document.getElementById('message');
+        const modal = document.getElementById('modal');
+        const sochteHaiButton = document.getElementById('sochteHai');
+
+        let confettiInterval;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            animatedImage.addEventListener('animationend', () => {
+                launchConfetti();
+                setTimeout(showTapToContinue, 3000);
+            });
+        });
+
+        function launchConfetti() {
+            confettiInterval = setInterval(() => {
+                confetti({
+                    particleCount: 30,
+                    spread: 360,
+                    origin: { x: Math.random(), y: Math.random() },
+                    disableForReducedMotion: true
+                });
+            }, 100);
+        }
+
+        function showTapToContinue() {
+            tapToContinue.style.display = "block";
+        }
+
+        document.body.addEventListener('click', () => {
+            clearInterval(confettiInterval);
+            tapToContinue.style.display = "none";
+            startTypingAnimation();
+        });
+
+        function typeWriterEffect(element, text, speed = 100) {
+            element.style.display = "block";
+            element.innerHTML = "";
+            let index = 0;
+
+            function type() {
+                if (index < text.length) {
+                    element.innerHTML += text.charAt(index);
+                    index++;
+                    setTimeout(type, speed);
+                } else {
+                    showModal();
+                }
+            }
+
+            type();
+        }
+
+        function showModal() {
+            modal.style.display = "block";
+        }
+
+        // Function to randomly move the button within the window bounds
+        function moveRandomly() {
+            const maxX = window.innerWidth - sochteHaiButton.offsetWidth; // Ensure it doesn't go out of bounds horizontally
+            const maxY = window.innerHeight - sochteHaiButton.offsetHeight; // Ensure it doesn't go out of bounds vertically
+
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+
+            sochteHaiButton.style.position = "absolute";
+            sochteHaiButton.style.left = `${randomX}px`;
+            sochteHaiButton.style.top = `${randomY}px`;
+        }
+
+        // Add event listeners to trigger movement on hover and click
+        sochteHaiButton.addEventListener('mouseover', moveRandomly);
+        sochteHaiButton.addEventListener('click', moveRandomly);
+
+        function handleYes() {
+            window.location.href = 'https://www.instagram.com/itsrohitgiri';
+        }
+
+        function startTypingAnimation() {
+            const birthdayMessage = "Happy Birthday, my love! Wishing you happiness, success, and love every day!";
+            typeWriterEffect(messageDiv, birthdayMessage);
+        }
+    </script>
+</body>
+</html>
