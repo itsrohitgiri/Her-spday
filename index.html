@@ -80,46 +80,46 @@
 
         /* Pop-up modal styles */
         #modal {
-    display: none;
-    position: fixed;
-    top: 70%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(to bottom, skyblue 0%, palevioletred 100%); /* Gradient effect */
-    padding: 20px 40px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    text-align: center;
-    z-index: 100;
-    font-family: Arial, sans-serif;
-    color: white;
-    width: 400px;
-}
+            display: none;
+            position: fixed;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(to bottom, skyblue 0%, palevioletred 100%); /* Gradient effect */
+            padding: 20px 40px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            text-align: center;
+            z-index: 100;
+            font-family: Arial, sans-serif;
+            color: white;
+            width: 400px;
+        }
 
-/* Style buttons */
-#modal button {
-    margin: 10px;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.2s ease;
-}
+        /* Style buttons */
+        #modal button {
+            margin: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
 
-.think-btn {
-    background-color: black;
-    color: white;
-}
+        .think-btn {
+            background-color: black;
+            color: white;
+        }
 
-.yes-btn {
-    background-color: palevioletred;
-    color: white;
-}
+        .yes-btn {
+            background-color: palevioletred;
+            color: white;
+        }
 
-#modal button:hover {
-    opacity: 0.8;
-}
+        #modal button:hover {
+            opacity: 0.8;
+        }
 
     </style>
 </head>
@@ -136,9 +136,12 @@
     <!-- Modal popup for confirmation -->
     <div id="modal">
         <h2>Will you be mine forever?</h2>
-        <button class="think-btn" id="sochteHai">Sochte hai</button>
-        <button class="yes-btn" onclick="handleYes()">Yesss</button>
+        <button class="think-btn" onclick="playSongWithAnimation('sochte')">Sochte hai</button>
+        <button class="yes-btn" onclick="playSongWithAnimation('yes')">Yesss</button>
     </div>
+
+    <audio id="yes-audio" src="./yes.mp3"></audio>
+    <audio id="sochte-audio" src="./No.mp3"></audio>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
@@ -147,7 +150,6 @@
         const tapToContinue = document.getElementById('tapToContinue');
         const messageDiv = document.getElementById('message');
         const modal = document.getElementById('modal');
-        const sochteHaiButton = document.getElementById('sochteHai');
 
         let confettiInterval;
 
@@ -201,31 +203,88 @@
             modal.style.display = "block";
         }
 
-        // Function to randomly move the button within the window bounds
-        function moveRandomly() {
-            const maxX = window.innerWidth - sochteHaiButton.offsetWidth; // Ensure it doesn't go out of bounds horizontally
-            const maxY = window.innerHeight - sochteHaiButton.offsetHeight; // Ensure it doesn't go out of bounds vertically
-
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
-
-            sochteHaiButton.style.position = "absolute";
-            sochteHaiButton.style.left = `${randomX}px`;
-            sochteHaiButton.style.top = `${randomY}px`;
-        }
-
-        // Add event listeners to trigger movement on hover and click
-        sochteHaiButton.addEventListener('mouseover', moveRandomly);
-        sochteHaiButton.addEventListener('click', moveRandomly);
-
-        function handleYes() {
-            window.location.href = 'https://www.instagram.com/itsrohitgiri';
-        }
-
         function startTypingAnimation() {
             const birthdayMessage = "Happy Birthday, my love! Wishing you happiness, success, and love every day!";
             typeWriterEffect(messageDiv, birthdayMessage);
         }
+
+        function playSongWithAnimation(type) {
+    const yesAudio = document.getElementById('yes-audio');
+    const sochteAudio = document.getElementById('sochte-audio');
+    const animationContainer = document.createElement('div');
+
+    // Reset audios
+    yesAudio.pause();
+    sochteAudio.pause();
+    yesAudio.currentTime = 0;
+    sochteAudio.currentTime = 0;
+
+    // Remove any existing animations
+    animationContainer.className = '';
+    animationContainer.style.position = 'absolute';
+    animationContainer.style.top = '0';
+    animationContainer.style.left = '0';
+    animationContainer.style.width = '100%';
+    animationContainer.style.height = '100%';
+    animationContainer.style.pointerEvents = 'none';
+    document.body.appendChild(animationContainer);
+
+    if (type === 'yes') {
+        yesAudio.play();
+        createHeartsAndSparkles(animationContainer);
+        yesAudio.addEventListener('ended', () => {
+            window.location.href = 'https://instagram.com/itsrohitgiri';
+        });
+    } else if (type === 'sochte') {
+        sochteAudio.play();
+        createSadEffect(animationContainer);
+    }
+
+    function createHeartsAndSparkles(container) {
+        
+        const interval = setInterval(() => {
+            container.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            const heart = document.createElement('div');
+            heart.style.position = 'absolute';
+            heart.style.width = '20px';
+            heart.style.height = '20px';
+            heart.style.background = 'red';
+            heart.style.borderRadius = '50%';
+            heart.style.boxShadow = '0 0 10px pink';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.top = Math.random() * window.innerHeight + 'px';
+            heart.style.animation = 'fadeOut 2s ease';
+            container.appendChild(heart);
+
+            setTimeout(() => {
+                container.removeChild(heart);
+            }, 2000);
+        }, 100);
+
+        setTimeout(() => {
+            clearInterval(interval);
+            document.body.removeChild(container);
+        }, yesAudio.duration * 1000);
+    }
+
+    function createSadEffect(container) {
+        container.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        container.style.animation = 'fadeOut 3s ease forwards';
+
+        setTimeout(() => {
+            document.body.removeChild(container);
+        }, 3000);
+    }
+
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
     </script>
 </body>
 </html>
