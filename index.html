@@ -24,8 +24,18 @@
             left: 50%;
             transform: translateX(-50%);
             border-radius: 50%;
-            animation: slideDown 2s ease-out forwards;
             text-align: center;
+        }
+
+        /* Text to tap after animation ends */
+        #tapToContinue {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            color: white;
+            font-size: 24px;
+            text-shadow: 1px 1px 2px black;
+            cursor: pointer;
         }
 
         /* Copyright text */
@@ -161,7 +171,7 @@
     </div>
     <canvas id="confettiCanvas"></canvas>
     <div id="message"></div>
-
+    <div id="tapToContinue">Tap to Continue</div>
     <!-- Modal popup for confirmation -->
     <div id="modal">
         <h2>Will you be mine forever?</h2>
@@ -178,14 +188,11 @@
         const animatedImage = document.getElementById('animatedImage');
         const messageDiv = document.getElementById('message');
         const modal = document.getElementById('modal');
+        const tapToContinue = document.getElementById('tapToContinue');
 
         let confettiInterval;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            animatedImage.addEventListener('animationend', () => {
-                launchConfetti();
-            });
-        });
+        
 
         // Add the boom sound
 const boomSound = new Audio('./boom.mp3');
@@ -211,23 +218,37 @@ function launchConfetti() {
         });
     }, 100);
 }
-function startCelebration() {
-            // Hide the instructions overlay
-            instructionsOverlay.style.display = 'none';
+document.getElementById('startButton').addEventListener('click', (event) => {
+  event.stopPropagation(); // Prevent click from bubbling up to the body
+  
+  // Hide the instructions overlay and start the animation and confetti
+  instructionsOverlay.style.display = 'none'; // Hide the instructions overlay
 
-            // Show main content
-            mainContent.style.display = 'flex';
-        }
+  // Launch confetti and animation
+  launchConfetti();
+  animatedImage.style.animation = 'slideDown 2s ease-out forwards'; // Start the animation on the image
+  setTimeout(showTapToContinue, 3000);
+});
 
-        document.getElementById('startButton').addEventListener('click', startCelebration);
+document.addEventListener('DOMContentLoaded', () => {
+  // Initially hide the animated image
+  animatedImage.style.top = '-200px'; // Ensure it is above the viewable area
+});
 
 
-        document.body.addEventListener('click', () => {
-            clearInterval(confettiInterval);
-            boomSound.pause();
-            HBSound.pause();
-            startTypingAnimation();
-        });
+
+
+document.body.addEventListener('click', (event) => {
+  // Only run if the instructionsOverlay is visible
+  if (instructionsOverlay.style.display == 'none') {
+    clearInterval(confettiInterval); // Stop the confetti animation
+    boomSound.pause();               // Pause the boom sound
+    HBSound.pause();                 // Pause the background sound
+    startTypingAnimation();         // Start the typing animation
+    tapToContinue.style.display = "none";
+  }
+});
+
 
         function typeWriterEffect(element, text, speed = 100) {
             element.style.display = "block";
@@ -254,6 +275,10 @@ function startCelebration() {
         function startTypingAnimation() {
             const birthdayMessage = "Happy Birthday, my love! Wishing you happiness, success, and love every day!";
             typeWriterEffect(messageDiv, birthdayMessage);
+        }
+
+        function showTapToContinue() {
+            tapToContinue.style.display = "block";
         }
 
         function playSongWithAnimation(type) {
