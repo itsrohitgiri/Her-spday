@@ -35,18 +35,6 @@
             font-family: Arial, sans-serif;
             text-shadow: 1px 1px 2px palevioletred;
         }
-
-        /* Text to tap after animation ends */
-        #tapToContinue {
-            display: none;
-            position: absolute;
-            bottom: 20px;
-            color: white;
-            font-size: 24px;
-            text-shadow: 1px 1px 2px black;
-            cursor: pointer;
-        }
-
         /* Animation */
         @keyframes slideDown {
             from {
@@ -76,6 +64,8 @@
             text-shadow: 1px 1px 2px skyblue;
             font-family: Arial, sans-serif;
             display: none;
+            justify-content: center;
+            align-items: center;
         }
 
         /* Pop-up modal styles */
@@ -121,16 +111,55 @@
             opacity: 0.8;
         }
 
+        #instructionsOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1000;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+        }
+        
+        /* Start button */
+        #startButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            background-color: palevioletred;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            border-radius: 5px;
+        }
+
+        #startButton:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
-    <!-- Animated birthday image -->
+    <!-- Fullscreen Overlay with Instructions -->
+    <div id="instructionsOverlay">
+        <h1>Welcome</h1>
+        <h3 style="color: red;">*Turn on the sound for better experience🔊🔊🔊</h3>
+        <p>Click the button below to proceed and start the celebration.</p>
+        <button id="startButton">Start Celebration</button>
+    </div>
+        <!-- Animated birthday image -->
     <div id="animatedImage">
         <img src="https://png.pngtree.com/png-clipart/20220923/original/pngtree-happy-birthday-my-love-art-font-png-image_8628271.png" height="300px" width="300px" alt="">
         <div id="copyright">&copy; by itsrohitgiri</div>
     </div>
     <canvas id="confettiCanvas"></canvas>
-    <div id="tapToContinue">Tap to Continue</div>
     <div id="message"></div>
 
     <!-- Modal popup for confirmation -->
@@ -147,7 +176,6 @@
     <script>
         const confettiCanvas = document.getElementById('confettiCanvas');
         const animatedImage = document.getElementById('animatedImage');
-        const tapToContinue = document.getElementById('tapToContinue');
         const messageDiv = document.getElementById('message');
         const modal = document.getElementById('modal');
 
@@ -156,28 +184,48 @@
         document.addEventListener('DOMContentLoaded', () => {
             animatedImage.addEventListener('animationend', () => {
                 launchConfetti();
-                setTimeout(showTapToContinue, 3000);
             });
         });
 
-        function launchConfetti() {
-            confettiInterval = setInterval(() => {
-                confetti({
-                    particleCount: 30,
-                    spread: 360,
-                    origin: { x: Math.random(), y: Math.random() },
-                    disableForReducedMotion: true
-                });
-            }, 100);
+        // Add the boom sound
+const boomSound = new Audio('./boom.mp3');
+boomSound.loop = true;
+boomSound.autoplay = true;
+boomSound.volume = 0.5;
+const HBSound = new Audio('./hb.mp3');
+HBSound.loop = true;
+HBSound.autoplay = true;
+HBSound.volume = 0.5; // Set volume to 50%
+
+function launchConfetti() {
+    // Play the boom sound
+    boomSound.play();
+    HBSound.play();
+
+    confettiInterval = setInterval(() => {
+        confetti({
+            particleCount: 30,
+            spread: 360,
+            origin: { x: Math.random(), y: Math.random() },
+            disableForReducedMotion: true
+        });
+    }, 100);
+}
+function startCelebration() {
+            // Hide the instructions overlay
+            instructionsOverlay.style.display = 'none';
+
+            // Show main content
+            mainContent.style.display = 'flex';
         }
 
-        function showTapToContinue() {
-            tapToContinue.style.display = "block";
-        }
+        document.getElementById('startButton').addEventListener('click', startCelebration);
+
 
         document.body.addEventListener('click', () => {
             clearInterval(confettiInterval);
-            tapToContinue.style.display = "none";
+            boomSound.pause();
+            HBSound.pause();
             startTypingAnimation();
         });
 
@@ -246,9 +294,9 @@
             container.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
             const heart = document.createElement('div');
             heart.style.position = 'absolute';
-            heart.style.width = '20px';
-            heart.style.height = '20px';
-            heart.style.background = 'red';
+            heart.style.width = '4px';
+            heart.style.height = '4px';
+            heart.style.background = 'white';
             heart.style.borderRadius = '50%';
             heart.style.boxShadow = '0 0 10px pink';
             heart.style.left = Math.random() * window.innerWidth + 'px';
